@@ -1,7 +1,7 @@
 $(function() {
 	// Active menu problem, using seperate js file to handle that only
 	switch (menu) {
-	default:
+	default:$('#a_'+menu).addClass('active');
 	case 'Home':
 		$('#home').addClass('active');
 		break;

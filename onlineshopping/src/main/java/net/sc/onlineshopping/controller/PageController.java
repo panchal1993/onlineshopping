@@ -1,18 +1,35 @@
 package net.sc.onlineshopping.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.sc.shoppingbackend.dao.CategoryDAO;
+import net.sc.shoppingbackend.dto.Category;
+
 @Controller
 public class PageController {
 
+	// this is to parse the list from back end and
+	// to reflect it to the main page
+	@Autowired
+	private CategoryDAO categoryDAO;
+
+	// Mapping request so that every page with given
+	// url form will go through it
 	@RequestMapping(value = { "/", "/home", "/index" })
 	public ModelAndView index() {
 		ModelAndView mv = new ModelAndView("page");
 		// mv.addObject("greeting", "Welcome to Spring Web MVC");
 		mv.addObject("title", "Home");
+
+		// Passing the list of categories we got from backend
+
+		mv.addObject("categories", categoryDAO.list());
+
 		mv.addObject("userClickHome", true);
 		return mv;
 	}
@@ -37,6 +54,38 @@ public class PageController {
 		mv.addObject("userClickContact", true);
 		return mv;
 	}
+	
+	//Metod to load all the products
+	//and based on category
+	
+	@RequestMapping(value = "/show/all/products")
+	public ModelAndView showAllProducts() {
+		ModelAndView mv = new ModelAndView("page");
+		// mv.addObject("greeting", "Welcome to Spring Web MVC");
+		mv.addObject("title", "All Products");
+		mv.addObject("categories", categoryDAO.list());
+		mv.addObject("userClickAllProducts", true);
+		return mv;
+	}
+	
+	@RequestMapping(value = "/show/category/{id}/products")
+	public ModelAndView showCategoryProducts(@PathVariable("id") int id) {
+		ModelAndView mv = new ModelAndView("page");
+		
+		//categoryDAO to fetch a single category
+		
+		Category category = null;
+		category  = categoryDAO.get(id);
+		// mv.addObject("greeting", "Welcome to Spring Web MVC");
+		mv.addObject("title", category.getName());
+		mv.addObject("categories", categoryDAO.list());
+		
+		//passing the individual category
+		mv.addObject("category",category);
+		mv.addObject("userClickCategoryProducts", true);
+		return mv;
+	}
+	
 
 	// This block to pass the values using url, but it becomes lengthy
 	// http://localhost:8080/onlineshopping/test?greeting=Welcome%20Bitch
